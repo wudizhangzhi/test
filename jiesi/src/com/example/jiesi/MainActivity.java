@@ -6,6 +6,8 @@ import android.util.Log;
 
 import java.io.File;
 import java.lang.reflect.Method;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import com.example.jiesi.DialogSet.OnPositiveClickListener;
 
@@ -13,13 +15,19 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -39,6 +47,9 @@ import android.widget.Toast;
 import cn.jpush.android.api.JPushInterface;
 
 public class MainActivity extends ActionBarActivity {
+	// 网页加载超时时间
+	private final int TIMEOUT = 8000;
+
 	WebView webView;
 	ProgressBar progressbar;
 	SharedPreferences sp;
@@ -47,6 +58,8 @@ public class MainActivity extends ActionBarActivity {
 	// private static String URL = "rg.ga.cheersdata.com";
 	View dialog;
 	AutoCompleteTextView edt_ip;
+
+	Timer timer;// 加载超时检查
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -57,8 +70,8 @@ public class MainActivity extends ActionBarActivity {
 		URL = sp.getString("url_path", "www.baidu.com");
 
 		// 初始化推送
-		JPushInterface.setDebugMode(true);
-		JPushInterface.init(this);
+		// JPushInterface.setDebugMode(true);
+		// JPushInterface.init(this);
 		// getSupportActionBar().setDisplayShowCustomEnabled(true);
 		// getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
 		// ActionBar.DISPLAY_SHOW_TITLE);
@@ -66,12 +79,6 @@ public class MainActivity extends ActionBarActivity {
 
 		progressbar = (ProgressBar) findViewById(R.id.progressBar);
 		webView = (WebView) findViewById(R.id.webview);
-
-		// webView.loadUrl(URL);
-		LoadUrl(webView, URL);
-
-		// 测试用
-		// webView.loadUrl("http://www.qq.com");
 
 		WebSettings webSettings = webView.getSettings();
 		webSettings.setUseWideViewPort(true);// 设置此属性，调整至适合大小
@@ -91,6 +98,7 @@ public class MainActivity extends ActionBarActivity {
 					progressbar.setVisibility(View.VISIBLE);
 				}
 			}
+
 		});
 
 		webView.setWebViewClient(new WebViewClient() {
@@ -100,8 +108,72 @@ public class MainActivity extends ActionBarActivity {
 				view.loadUrl(url);
 				return true;
 			}
+
+			@Override
+			public void onPageStarted(WebView view, String url, Bitmap favicon) {
+				if (!isNetworkAvailable()) {
+					webView.stopLoading();
+					Toast.makeText(MainActivity.this, "手机未连接网络", Toast.LENGTH_LONG).show();
+					super.onPageStarted(view, url, favicon);
+				}
+				timer = new Timer();
+				TimerTask task = new TimerTask() {
+
+					@Override
+					public void run() {
+						Message msg = handler.obtainMessage();
+						msg.what = 1;
+						handler.sendMessage(msg);
+						timer.cancel();
+						timer.purge();
+					}
+				};
+				super.onPageStarted(view, url, favicon);
+				timer.schedule(task, TIMEOUT, 1);
+			}
+
+			@Override
+			public void onPageFinished(WebView view, String url) {
+				timer.cancel();
+				timer.purge();
+				super.onPageFinished(view, url);
+			}
+			
+			@Override
+			public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+				if (isNetworkAvailable()) {
+					Message msg = handler.obtainMessage();
+					msg.what = 2;
+					msg.obj=description;
+					handler.sendMessage(msg);
+					timer.cancel();
+					timer.purge();
+				}
+				super.onReceivedError(view, errorCode, description, failingUrl);
+			}
 		});
+
+		// webView.loadUrl(URL);
+		LoadUrl(webView, URL);
+
 	}
+
+	/**
+	 * 处理webview的加载
+	 */
+	Handler handler = new Handler() {
+		public void handleMessage(android.os.Message msg) {
+			if (msg.what == 1) {
+				Toast.makeText(MainActivity.this, "网络连接超时，请检查手机网络", Toast.LENGTH_SHORT).show();
+				webView.stopLoading();
+			}else if (msg.what==2) {
+				Toast.makeText(MainActivity.this, "请输入正确的地址:"+msg.obj, Toast.LENGTH_SHORT).show();
+				webView.stopLoading();
+				//加载自定义页面
+//				webView.loadUrl("file:///android_asset/404.html");
+			}
+		}
+	};
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -152,7 +224,7 @@ public class MainActivity extends ActionBarActivity {
 			webView.reload();
 			Toast.makeText(this, "刷新", Toast.LENGTH_SHORT).show();
 			break;
-		case R.id.action_clear://清空缓存
+		case R.id.action_clear:// 清空缓存
 			CookieSyncManager.createInstance(this);
 			CookieManager cookieManager = CookieManager.getInstance();
 			cookieManager.setAcceptCookie(true);
@@ -163,13 +235,13 @@ public class MainActivity extends ActionBarActivity {
 			webView.clearCache(true);
 			webView.reload();
 			// webView.loadDataWithBaseURL(null, "","text/html", "utf-8",URL);
-			//清除url历史
+			// 清除url历史
 			Editor editor = sp.edit();
 			editor.clear();
 			editor.commit();
 			Toast.makeText(this, "清除缓存", Toast.LENGTH_SHORT).show();
 			break;
-		case R.id.action_out://退出程序
+		case R.id.action_out:// 退出程序
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setTitle("退出");
 			builder.setMessage("您确认要退出吗？");
@@ -265,6 +337,7 @@ public class MainActivity extends ActionBarActivity {
 	 * @param url
 	 */
 	private void LoadUrl(WebView web, String url) {
+		// web.loadUrl("http:\\\\" + url + "\\");
 		web.loadUrl("http:\\\\" + url + "\\");
 	}
 
@@ -276,5 +349,18 @@ public class MainActivity extends ActionBarActivity {
 	 */
 	public String[] strToStringSet(String s) {
 		return s.replace("null", "").split(",");
+	}
+	
+	/**
+	 * 判断网络连接
+	 * @return
+	 */
+	private boolean isNetworkAvailable(){
+		ConnectivityManager cm=(ConnectivityManager) MainActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo info=cm.getActiveNetworkInfo();
+		if (info!=null) {
+			return true;
+		}
+		return false;
 	}
 }
