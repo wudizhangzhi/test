@@ -1,0 +1,14 @@
+/***************************
+GENERAL
+***************************/
+body {
+    font:12px Helvetica,Arial,sans-serif;
+    line-height:1.62;
+}
+
+.top{
+    text_align:center;
+    height: 50px;
+    font-size: 20px;
+    background-color: dodgerblue;
+}
