@@ -2,13 +2,50 @@
 GENERAL
 ***************************/
 body {
-    font:12px Helvetica,Arial,sans-serif;
-    line-height:1.62;
+    padding-left: 15px;
+    font: 12px Helvetica, Arial, sans-serif;
+    line-height: 1.62;
 }
 
-.top{
-    text_align:center;
-    height: 50px;
-    font-size: 20px;
+a:link {
+    text-decoration: none;
+}
+
+a:hover {
     background-color: dodgerblue;
+}
+
+.nav, .item-chat {
+    list-style-type: none;
+}
+
+.nav_inline {
+    display: table-cell;
+    float: left;
+    margin-right: 10px;
+}
+
+.form-group {
+    float: left;
+}
+
+/*成员列表*/
+.item-list {
+    font-size: 6em;
+    color: darkgreen;
+}
+
+/*当前页码*/
+.active {
+    color: indigo;
+}
+
+.pagination {
+    list-style-type: none;
+}
+
+.pagination li {
+    float: left;
+    margin-right: 5px;
+    padding: 2px;
 }

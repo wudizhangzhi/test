@@ -9,7 +9,12 @@ from handlers import *
 requestHandlers = [
     (r'/', mainHandler),
     (r'/register', registerHandler),
-    (r'/login',loginHandler)
+    (r'/login', loginHandler),
+    (r'/index/(\w+)', indexHandler),  # \w匹配包括下划线的任何单词字符
+    (r'/write', writeBlogHandler),
+    (r'/member', memberHandler),
+    (r'/chat/(\w+)', chatHandler),
+    (r'/blog/(\w+)', blogHandler),
 ]
 
 settings = {

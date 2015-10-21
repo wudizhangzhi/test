@@ -1,0 +1,17 @@
+{%extends 'main.html'%}
+{%include 'header.html'%}
+
+{%block content %}
+<form method="post" action="/write">
+    <div><p>标题</p>
+        <input type="text" name="title">
+        <br/></div>
+    <div>
+        <p>正文</p>
+        <input type="text" name="content">
+        <button type="submit">提交并保存</button>
+        <br/>
+    </div>
+</form>
+
+{%end%}

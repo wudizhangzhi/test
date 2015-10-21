@@ -1,38 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <link rel='stylesheet' href='{{static_url("css/main.css")}}'>
-    <link rel="stylesheet" href='{{static_url("css/normalize.css")}}'>
-    <title>木林森</title>
-</head>
+{%extends 'main.html'%}
+{%include 'header.html'%}
 
-<body>
+{%block content%}
+<ul class="nav">
+    {%for i in blogs %}
+    <li><a href="/user/{{i[1]}}">【{{i[1]}}】</a>
+        <a href="/blog/{{i[0]}}">{{i[2]}}</a>
 
-<div class="top">木林森样品展示页面</div>
-<div class="content">
-    <ul>
+        <p>{{i[3]}}</p>
+    </li>
+    <br/>
+    {%end%}
+</ul>
+{%end%}
 
-        <li><a class="show" href="show.html" target="_blank">
-            <img src="../static/img/p2185227574.jpg">
-
-            <p>哥斯拉</p>
-        </a></li>
-    </ul>
-    <ul>
-        {% for each in data%}
-        <li><a class="show" href="show.html" target="_blank">
-            <img src="../static/img/{{each['img']}}.jpg">
-
-            <p>{{each['name']}}</p></a></li>
-        {% end %}
-    </ul>
-</div>
-<div class="footer">
-    {% for i in range(num)%}
-    <a class="index" href="\">{{i}}
-    </a>{%end%}
-</div>
-</body>
-<footer>123</footer>
-</html>
+{%block footer%}
+<p>{{footer}}}</p>
+{%end%}

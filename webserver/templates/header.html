@@ -1,0 +1,28 @@
+{%block header %}
+<ul class="nav">
+    <li><a href="/" class="nav_inline">首页</a></li>
+    <li><a href="/member" class="nav_inline">成员</a></li>
+    <li><a href="/chat/1" class="nav_inline">群聊</a></li>
+    <li><a href="/write" class="nav_inline">写文章</a></li>
+    {% if not cookieName%}
+    <!-- 没登录显示登录框-->
+    <form method="post" action="/" class="form-inline">
+        <div class="form-group">
+            <label>用户名</label>
+            <input type="text" placeholder="用户名" name="username">
+        </div>
+        <div class="form-group">
+            <label>密码</label>
+            <input type="password" placeholder="密码" name="password">
+        </div>
+        <button type="submit">登录</button>
+        <a href="/register">无账号，点击注册</a>
+    </form>
+    {%else%}
+    <li><a class='nav_inline' href="/user/{{cookieName}}">欢迎：{{cookieName}}</a></li>
+    <li><a class='nav_inline' href="">注销</a></li>
+    <br/>
+    {%end%}
+</ul>
+
+{%end%}

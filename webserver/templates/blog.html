@@ -1,0 +1,35 @@
+{%extends 'main.html'%}
+{%include 'header.html'%}
+
+{% block content%}
+
+<div>
+    <!--某某的专栏-->
+    <p>{{blog[1]}}的专栏</p>
+    <br/>
+    <!--标题和时间-->
+    <p>{{blog[2]}}</p>
+    <p>{{blog[4]}}</p>
+    <br/>
+    <!--正文内容-->
+    {%raw blog[3]%}
+</div>
+
+<!--发送评论区-->
+<div>
+    <form method="post" action="/blog/{{num}}">
+        <input type="text" name="comment" placeholder="输入评论">
+        <button type="submit">发表评论</button>
+    </form>
+</div>
+
+<!--显示评论区-->
+<div>
+    <ul>
+        {%for i in comment%}
+        <ui>
+        </ui>
+        {%end%}
+    </ul>
+</div>
+{%end%}

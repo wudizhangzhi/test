@@ -1,0 +1,10 @@
+{%extends 'main.html'%}
+{%include 'header.html'%}
+
+{%block content %}
+<ul>
+    {% for p in member%}
+    <li class="item-list">{{p[1]}}</li>
+    {%end%}
+</ul>
+{% end%}
