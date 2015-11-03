@@ -1,0 +1,22 @@
+{%extends 'main.html'%}
+{%include 'header.html'%}
+
+{%block content%}
+<!--个人信息-->
+<div>{{name}}</div>
+<!--个人博客-->
+<div>
+    <ul class="blog_overflow">
+        {%for blog in blogs%}
+        <li>标题:<a href="/blog/{{blog[0]}}">{{blog[2]}}</a>
+
+            <p>发表时间:{{blog[4]}}</p>
+            <br/>
+
+            <p class="overflow">正文:{{blog[3]}}</p>
+        </li>
+        {%end%}
+    </ul>
+    <br/>
+</div>
+{%end%}

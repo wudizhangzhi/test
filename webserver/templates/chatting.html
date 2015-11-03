@@ -1,0 +1,91 @@
+{%extends 'main.html'%}
+{%include 'header.html'%}
+
+{%block content%}
+<!--测试websocket-->
+<script type="text/javascript" src="{{static_url('js/chatjs.js')}}" charset="utf-8">
+</script>
+<script type="text/javascript" src="{{static_url('js/innerhtml.js')}}" charset="utf-8"></script>
+<!--测试websocket结束-->
+
+<!--<script>-->
+<!--&lt;!&ndash; 长连接&ndash;&gt;-->
+<!--function loadChat() {-->
+<!--var xmlhttp;-->
+<!--if (window.XMLHttpRequest) {-->
+<!--xmlhttp = new XMLHttpRequest()-->
+<!--} else {-->
+<!--xmlhttp = new ActiveXObject("Microsoft.XMLHTTP")-->
+<!--}-->
+<!--xmlhttp.onreadystatechange = function () {-->
+<!--if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {-->
+<!--document.getElementById('chat').innerHTML = xmlhttp.responseText;-->
+<!--}-->
+<!--};-->
+<!--xmlhttp.open('GET', '/chat/{{num}}', true);-->
+<!--xmlhttp.send()-->
+<!--}-->
+<!--function update() {-->
+<!--loadChat();-->
+<!--window.setTimeout('update()', 2000);-->
+<!--}-->
+<!--update();-->
+
+<!--</script>-->
+
+
+<!--页码-->
+<div id="chat">
+
+</div>
+<script src="{{static_url('js/page.js')}}"></script>
+<div class="tcdPageCode">
+</div>
+<script>
+    $('.tcdPageCode').createPage({
+        pageCount: {{pages}},
+        current: 1,
+        backFn: function (p) {
+            var msg={'num':p,
+            'type':index};
+            chatsocket.socket.send(JSON.stringify(msg));
+        }
+    });
+</script>
+
+<br/>
+<br/>
+<!--发送对话框-->
+<script>
+    function getcookie(objname) {
+        var arrstr = document.cookie.split("; ");
+        for (var i = 0; i < arrstr.length; i++) {
+            var temp = arrstr[i].split("=");
+            if (temp[0] == objname) return unescape(temp[1]);
+        }
+    }
+</script>
+<!--<script>-->
+<!--$(document).ready(function () {-->
+<!--$('#send').click(function () {-->
+<!--//            TODO 发送内容不能为空格-->
+<!--if (getcookie('cookieName')) {-->
+<!--if ($('#topic').val() == '') {-->
+<!--alert('内容不能为空');-->
+<!--} else {-->
+<!--$('#form_comment').submit()-->
+<!--}-->
+<!--} else {-->
+<!--alert('请先登录')-->
+<!--}-->
+<!--})-->
+<!--})-->
+<!--</script>-->
+
+
+<form action="/chatting/1" method="post" id="form_comment">
+    <input type="text" placeholder="发表新的内容" name="topic" id="topic" value="">
+    <button type="button" id="send">发送</button>
+    {% module xsrf_form_html()%}
+</form>
+{%end%}

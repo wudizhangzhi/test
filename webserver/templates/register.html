@@ -2,22 +2,107 @@
 
 
 {%block content%}
+<!--长连接-->
+<script>
+    $(document).ready(function () {
+        $('input').bind('input propertychange', function () {
+            checkUserName();
+        });
+        $('input').focus(function () {
+            checkUserName();
+        })
+    });
+    function checkUserName() {
+        var name = $('[name=username]').val();
+        var pw1 = $('[name=password]').val();
+        var pw2 = $('[name=password2]').val();
+        var xmlhttp;
+        if (window.XMLHttpRequest) {
+            xmlhttp = new XMLHttpRequest()
+        } else {
+            xmlhttp = new ActiveXObject('Microsoft.XMLHTTP')
+        }
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                var res = jQuery.parseJSON(xmlhttp.response);
+                if (res.name == 1) {//用户名已经存在
+                    document.getElementById("samename").style.visibility = 'visible';
+                } else if (res.name == 2) {//用户名长度不对
+                    document.getElementById("namelength").style.visibility = 'visible';
+                } else {
+                    document.getElementById("samename").style.visibility = 'hidden';
+                    document.getElementById("namelength").style.visibility = 'hidden';
+                }
+                if (res.pw == 1) {//密码不一致
+                    document.getElementById("diferentpw").style.visibility = 'visible';
+                    document.getElementById("pwerror").style.visibility = 'hidden';
+                } else if (res.pw == 2) {//# 密码长度不对
+                    document.getElementById("pwerror").style.visibility = 'visible';
+                    document.getElementById("diferentpw").style.visibility = 'hidden';
+                } else {
+                    document.getElementById("pwerror").style.visibility = 'hidden';
+                    document.getElementById("diferentpw").style.visibility = 'hidden';
+                }
+            }
+        };
+        xmlhttp.open('POST', '/checkRegister', 'true');
+        xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xmlhttp.send('username=' + name + '&password1=' + pw1 + "&password2=" + pw2);
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        $('#btn_register').click(function () {
+            var name = $('[name=username]').val();
+            var pw1 = $('[name=password]').val();
+            var pw2 = $('[name=password2]').val();
+            //用户名2-6个字符
+            if (name.length < 2 || name.length > 6) {
+                alert('用户名长度不得小于2或者大于6');
+                return;
+            }
+            //密码6-16个字符
+            if (pw1 == pw2) {
+                if (pw1.length < 6) {
+                    alert("密码长度不得小于6位!")
+                    return;
+                }
+                $('#form_register').submit()
+            } else {
+                alert('两次输入的密码不一致!');
+//                清空密码栏
+                $('[name=password]').val('');
+                $('[name=password]').focus();
+                $('[name=password2]').val('');
+            }
+        })
 
-<form method="post" action="/register">
-    <div class='form-group'>
+    })
+</script>
+
+<form method="post" action="/register" id="form_register">
+    <div class=''>
         <label>用户名</label>
-        <input type='text' name='username' />
+        <input type='text' name='username' id="username" autocomplete="off"/>
+
+        <p id="samename" style="visibility:hidden" class="worning">用户名已经存在！</p>
+
+        <p id="namelength" style="visibility:hidden" class="worning"> 用户名长度不得小于2或者大于6！</p>
     </div>
-    <div class='form-group'>
+    <div class=''>
         <label>密码</label>
-        <input type='password' name='password' />
+        <input type='password' name='password'/>
+
+        <p id="pwerror" style="visibility: hidden" class="worning">密码必须为6-16位字符</p>
     </div>
-    <div class='form-group'>
+    <div class=''>
         <label>确认密码</label>
-        <input type='password' name='password2' />
+        <input type='password' name='password2'/>
+
+        <p id="diferentpw" style="visibility: hidden" class="worning">两次输入密码不一致</p>
     </div>
 
-    <button type="submit" onclick="">注册</button>
-    <a href="/login">已有账号，直接登录</a>
+    <button type="button" id="btn_register">注册</button>
+    <a href="/index/1_1">已有账号，直接登录</a>
 </form>
 {%end%}

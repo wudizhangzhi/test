@@ -1,26 +1,23 @@
-{%extends 'main.html'%}
-{%include 'header.html'%}
-
-{%block content%}
 <ul>
     <!-- 聊天对话-->
     {%for each in chat[10*(num-1):10*num]%}
     <li class="item-chat"><a href="/user/{{each[1]}}">【{{each[1]}}】</a>{{each[3]}}:{{each[2]}}</li>
     {%end%}
-
 </ul>
-<!--页码-->
-<ul class="pagination">
-    {% for i in range(1,pages+1)%}
-    <li><a {% if num==i%}class='active'{%end%} href="/chat/{{i}}" >{{i}}</a></li>
-    {%end%}
-</ul>
-<br/>
-<br/>
-<!--发送对话框-->
-<form method="post" action="/chat/1">
-    <input type="text" placeholder="发表新的内容" name="topic">
-    <button type="submit">发送</button>
-</form>
+<!--&lt;!&ndash;页码&ndash;&gt;-->
+<!--<ul class="pagination">-->
+    <!--{% if pages-num>5%}-->
 
-{%end%}
+    <!--{%for i in range(num,num+4)%}-->
+    <!--<li><a {% if num==i%}class='active'{%end%} href="/chat/{{i}}" class="pagination_a" type="button">{{i}}</a></li>-->
+    <!--{%end%}-->
+    <!--<li>...</li>-->
+    <!--<li><a class="pagination_a" type="button">{{pages}}</a></li>-->
+    <!--{%else%}-->
+    <!--{% for i in range(num,pages+1)%}-->
+    <!--<li><a {% if num==i%}class='active'{%end%} href="/chat/{{i}}" class="pagination_a" type="button">{{i}}</a></li>-->
+    <!--{%end%}-->
+    <!--{%end%}-->
+<!--</ul>-->
+
+
