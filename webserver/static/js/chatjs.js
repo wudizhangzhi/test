@@ -7,7 +7,7 @@ $(document).ready(function () {
     //发送聊天内容
     $('#send').click(function () {
         var message = $('#topic').val();
-        if (message == '') {
+        if (message.trim() == '') {
             alert('发送内容不能为空')
         } else {
             var msg = {
@@ -21,6 +21,10 @@ $(document).ready(function () {
     });
 });
 
+String.prototype.trim=function() {
+
+    return this.replace(/(^\s*)|(\s*$)/g,'');
+};
 
 var chatsocket = {
     socket: null,

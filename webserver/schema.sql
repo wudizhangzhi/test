@@ -50,10 +50,9 @@ CREATE TABLE comment(
   time VARCHAR(30)
 );
 
--- DROP TABLE IF EXISTS blog_click_rate;
--- CREATE TABLE blog_click_rate(
---   blog_id SMALLINT UNSIGNED NOT NULL,
---   click_rate INT UNSIGNED NOT NULL,
---   FOREIGN KEY(blog_id) REFERENCES blog(id)
--- );
-
+DROP TABLE IF EXISTS blog_click_rate;
+CREATE TABLE blog_click_rate(
+  blog_id SMALLINT UNSIGNED NOT NULL,
+  click_rate INT UNSIGNED NOT NULL,
+  FOREIGN KEY(blog_id) REFERENCES blog(id)
+);

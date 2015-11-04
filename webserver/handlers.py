@@ -163,14 +163,11 @@ class chatsocketHandler(tornado.websocket.WebSocketHandler, baseHandler):
         print 'websocket open:' + str(num)
         chatsocketHandler.waiters.add(self)
         chats = showALLChat()
-        # self.cookieName=self.get_secure_cookie('cookieName')
         n = len(chats)
         if n % 10 == 0:
             pages = (n / 10)
         else:
             pages = (n / 10) + 1
-        # res=dict(message=self.render_string('chat.html', cookieName=self.get_current_user(), chat=chats, pages=pages, num=num),
-        #          pagination=self.render_string('pagination.html', pages=pages, num=num),)
         self.write_message(self.render_string('chat.html', cookieName=self.get_current_user(), chat=chats, pages=pages, num=num))
 
     def on_close(self):
@@ -187,7 +184,7 @@ class chatsocketHandler(tornado.websocket.WebSocketHandler, baseHandler):
         s = tornado.escape.json_decode(message)
         num = 1
         if (s['type']=='msg'):
-            insertChat(self.get_current_user(), s['content'])
+            insertChat(self.get_current_user(), s['content'].encode('utf8'))
         else:
             num = s['num']
         chats = showALLChat()
@@ -197,12 +194,7 @@ class chatsocketHandler(tornado.websocket.WebSocketHandler, baseHandler):
         else:
             pages = (n / 10) + 1
         for waiter in self.waiters:
-            a = waiter.render_string('chat.html', cookieName=self.get_current_user(), chat=chats, pages=pages, num=num),
-            b = waiter.render_string('pagination.html', pages=pages, num=num),
-            # res =dict(message=a,pagination=b)
-            # waiter.write_message(
-            #     waiter.render_string('chat.html', cookieName=self.get_current_user(), chat=chats, pages=pages, num=num))
-            waiter.write_message(self.render_string('chat.html', cookieName=self.get_current_user(), chat=chats, pages=pages, num=num))
+            waiter.write_message(self.render_string('chat.html', chat=chats, pages=pages, num=num))
 
 
 class chatHandler(tornado.websocket.WebSocketHandler, baseHandler):
@@ -226,26 +218,15 @@ class chattingHandler(baseHandler):
         每页显示10条
         '''
 
-    def get(self, num):
-        print 'get chating:' + num
+    def get(self):
+        print 'get chating:'
         chats = showALLChat()
         n = len(chats)
         if n % 10 == 0:
             pages = (n / 10)
         else:
             pages = (n / 10) + 1
-        self.render('chatting.html', cookieName=self.get_current_user(), num=int(num), pages=pages)
-
-    def post(self, num):
-        print 'post chating'
-        # # 保存聊天内容到数据库
-        # topic = self.get_argument('topic')
-        # name = self.get_current_user()
-        # if not name:
-        #     # TODO 提示登录
-        #     return
-        # insertChat(name, topic)
-        self.redirect('/chatting/' + num)
+        self.render('chatting.html', cookieName=self.get_current_user(), num=1, pages=pages)
 
 
 class blogHandler(baseHandler):

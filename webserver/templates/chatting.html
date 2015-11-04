@@ -47,7 +47,7 @@
         current: 1,
         backFn: function (p) {
             var msg={'num':p,
-            'type':index};
+            'type':'index'};
             chatsocket.socket.send(JSON.stringify(msg));
         }
     });

@@ -10,8 +10,13 @@ import MySQLdb, time
 #     passwd='13961000804',
 #     db='web_test'
 # )
-#
+# #
 # cur = conn.cursor()
+# for i in range(10001):
+#     cur.execute('INSERT INTO chat(`name`, `content`, `time`) VALUES("TEST","HEHE","12")')
+# print 'end'
+# conn.commit()
+# conn.close()
 # sql_insert = u'INSERT test_server(img,name) VALUES("%s","%s")'
 # data = [[u'p2187004396', u'电影'], [u'p2188108927', u'呵呵']]
 # try:

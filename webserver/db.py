@@ -2,7 +2,6 @@
 __author__ = 'Administrator'
 
 import MySQLdb, time
-
 conn = MySQLdb.connect(
     host='localhost',
     port=3306,
@@ -14,7 +13,7 @@ cur = conn.cursor()
 
 
 def checkName(name):
-    cur.execute('SELECT name FROM users')
+    cur.execute('SELECT username FROM users')
     data = cur.fetchall()
     for i in data:
         if name == i[0]:
@@ -47,7 +46,7 @@ def check(name, password=None):
 
 def insert_user(name, password):
     regtime = time.ctime()
-    sql = 'INSERT  INTO users(name,password,regtime) VALUES("%s","%s","%s")' % (str(name), str(password), regtime)
+    sql = 'INSERT  INTO users(username,password,regtime) VALUES("%s","%s","%s")' % (str(name), str(password), regtime)
     print sql
     cur.execute(sql)
     conn.commit()
@@ -68,7 +67,6 @@ def saveBlog(name, title, content):
     print sql
     conn.commit()
     return
-
 
 def showAllUsers():
     cur.execute('SELECT * FROM users')
@@ -134,9 +132,9 @@ def addClickRate(blog_id):
     print sql
     return cur.fetchone
 
-
 def showHotBlog(num):
     '''显示最热的文章'''
     sql = 'SELECT * FROM blog ORDER BY click_rate DESC LIMIT %s' % num
     cur.execute(sql)
     return cur.fetchall()
+

@@ -13,7 +13,7 @@ requestHandlers = [
     (r'/index/(\w+)', indexHandler),  # \w匹配包括下划线的任何单词字符
     (r'/write', writeBlogHandler),
     (r'/member', memberHandler),
-    (r'/chatting/(\w+)', chattingHandler),
+    (r'/chatting/', chattingHandler),
     (r'/chat/(\w+)', chatHandler),
     (r'/blog/(\w+)', blogHandler),
     (r'/logout', logoutHandler),
